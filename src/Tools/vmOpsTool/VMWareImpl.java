@@ -48,7 +48,7 @@ public class VMWareImpl implements IVMWare {
     public void connect(ConnectionData connData) throws Exception {
         try {
             if (!isSessionActive()) {
-                System.out.println("No active session found.. establishing new session.");
+                System.out.println(String.format("No active session found.. establishing new session with '%s'.", connData.getUrl()));
                 VimService vimService = new VimService();
                 vimPort = vimService.getVimPort();
 
@@ -100,7 +100,7 @@ public class VMWareImpl implements IVMWare {
         }
 
         ManagedObjectReference vmMor = getMorByName(targetDCMor, vmName, VIRTUAL_MACHINE, false);
-        if (!customizationSpec.isEmpty()) {
+        if ((customizationSpec != null) && !customizationSpec.isEmpty()) {
             waitForOSCustomization(vmName, vmMor, Constants.OS_CUSTOMIZATION_MAX_WAIT_IN_MINUTES);
         }
         waitForVMToBeDeployReady(vmName, vmMor, timeout);
@@ -770,7 +770,7 @@ public class VMWareImpl implements IVMWare {
         configSpec.setAnnotation(description);
         VirtualMachineCloneSpec cloneSpec = new VirtualMachineCloneSpec();
 
-        if (!customizationSpec.isEmpty()) {
+        if ((customizationSpec != null) && !customizationSpec.isEmpty()) {
             System.out.println(String.format("Fetching customization specification with name [ %s ].", customizationSpec));
             CustomizationSpecItem customizationSpecItem = vimPort.getCustomizationSpec(
                     serviceContent.getCustomizationSpecManager(), customizationSpec);

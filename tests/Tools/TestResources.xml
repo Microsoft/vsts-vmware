@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestResources>
+    <TestResource names="inmemory, Subrahmanyam Mandavilli, Chaitanya Shrikhande, Krishna Aditya, Arun Mahapatra">
+        <Connection>
+            <UserName>Administrator@vsphere.local</UserName>
+            <Password>Password~1</Password>
+            <DataCenter>fareastdc</DataCenter>
+        </Connection>
+        <OperationTimeout>1200</OperationTimeout>
+        <TestMethod name="cloneVMFromTemplateWithTargetComputeAsESXiHostShouldSucceed">
+            <TestResource>
+                <Template>Ubuntu</Template>
+                <NewVmName>newVmOnEsxiHost</NewVmName>
+                <TargetDC>redmonddc</TargetDC>
+                <ComputeType>ESXi Host</ComputeType>
+                <ComputeName>idcvstt-lab318.corp.microsoft.com</ComputeName>
+                <Datastore>datastore1</Datastore>
+                <CustomizationSpec>Linux Spec</CustomizationSpec>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="cloneVMFromTemplateWithTargetComputeAsClusterShouldSucceed">
+            <TestResource>
+                <Template>Ubuntu</Template>
+                <NewVmName>newVmOnCluster</NewVmName>
+                <TargetDC>fareastdc</TargetDC>
+                <ComputeType>Cluster</ComputeType>
+                <ComputeName>fareastcluster</ComputeName>
+                <Datastore>SharedStorage</Datastore>
+                <CustomizationSpec>Linux Spec</CustomizationSpec>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="cloneVMFromTemplateWithTargetComputeAsResourcePoolShouldSucceed">
+            <TestResource>
+                <Template>Ubuntu</Template>
+                <NewVmName>newVmOnResourcePool</NewVmName>
+                <TargetDC>fareastdc</TargetDC>
+                <ComputeType>Resource Pool</ComputeType>
+                <ComputeName>fareastrp</ComputeName>
+                <Datastore>SharedStorage</Datastore>
+                <CustomizationSpec>Linux Spec</CustomizationSpec>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="cloneVMFromTemplateWithInvalidTargetComputeShouldFail">
+            <TestResource>
+                <Template>Ubuntu</Template>
+                <NewVmName>newVM</NewVmName>
+                <TargetDC>fareastdc</TargetDC>
+                <ComputeType>Invalid Compute</ComputeType>
+                <ComputeName>fareastrp</ComputeName>
+                <Datastore>datastore2</Datastore>
+                <CustomizationSpec>Linux Spec</CustomizationSpec>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="cloneVMFromNonExistingTemplateShouldFail">
+            <TestResource>
+                <Template>InvalidTemplate</Template>
+                <NewVmName>newVM</NewVmName>
+                <TargetDC>fareastdc</TargetDC>
+                <ComputeType>Resource Pool</ComputeType>
+                <ComputeName>fareastrp</ComputeName>
+                <Datastore>datastore2</Datastore>
+                <CustomizationSpec>Linux Spec</CustomizationSpec>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="cloneVMFromTemplateWithNonExistingTargetDatacenterShouldFail">
+            <TestResource>
+                <Template>Ubuntu</Template>
+                <NewVmName>newVM</NewVmName>
+                <TargetDC>InvalidDc</TargetDC>
+                <ComputeType>Resource Pool</ComputeType>
+                <ComputeName>fareastrp</ComputeName>
+                <Datastore>datastore1</Datastore>
+                <CustomizationSpec>Linux Spec</CustomizationSpec>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="cloneVMFromTemplateWithNonExistingTargetESXiShouldFail">
+            <TestResource>
+                <Template>Ubuntu</Template>
+                <NewVmName>newVM</NewVmName>
+                <TargetDC>fareastdc</TargetDC>
+                <ComputeType>ESXi Host</ComputeType>
+                <ComputeName>InvalidHost</ComputeName>
+                <Datastore>datastore1</Datastore>
+                <CustomizationSpec>Linux Spec</CustomizationSpec>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="cloneVMFromTemplateWithNonExistingTargetCloudShouldFail">
+            <TestResource>
+                <Template>Ubuntu</Template>
+                <NewVmName>newVM</NewVmName>
+                <TargetDC>fareastdc</TargetDC>
+                <ComputeType>Cluster</ComputeType>
+                <ComputeName>InvalidCluster</ComputeName>
+                <Datastore>datastore1</Datastore>
+                <CustomizationSpec>Linux Spec</CustomizationSpec>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="cloneVMFromTemplateWithNonExistingTargetResourcePoolShouldFail">
+            <TestResource>
+                <Template>Ubuntu</Template>
+                <NewVmName>newVM</NewVmName>
+                <TargetDC>fareastdc</TargetDC>
+                <ComputeType>Resource Pool</ComputeType>
+                <ComputeName>InvalidRp</ComputeName>
+                <Datastore>datastore1</Datastore>
+                <CustomizationSpec>Linux Spec</CustomizationSpec>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="createSnapshotWithSaveVMMemoryShouldSucceed">
+            <VirtualMachine>
+                <Name>Win8</Name>
+                <NewSnapshot>NewSnapshot</NewSnapshot>
+                <TargetDC>fareastdc</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="createSnapshotWithQuiesceShouldSucceed">
+            <VirtualMachine>
+                <Name>Win7</Name>
+                <NewSnapshot>NewSnapshot</NewSnapshot>
+                <TargetDC>redmonddc</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="startAndStopOnAVmShouldNotThrow">
+            <VirtualMachine>
+                <Name>startAndStopWindows</Name>
+                <TargetDC>redmonddc</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="startAndStopVmShouldSucceedForLinuxVM">
+            <VirtualMachine>
+                <Name>startAndStopUbuntu</Name>
+                <TargetDC>fareastdc</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="powerOnAndPowerOffVmShouldSucceed">
+            <VirtualMachine>
+                <Name>powerOnAndPowerOff</Name>
+                <TargetDC>fareastdc</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="restoreOrDeleteSnapshotShouldThrowIfSnapshotDoesNotExist">
+            <VirtualMachine>
+                <Name>Win2012R2</Name>
+                <Snapshot>InvalidSnapshot</Snapshot>
+                <TargetDC>redmonddc</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="restoreSnapshotShouldThrowIfVmDoesNotExist">
+            <VirtualMachine>
+                <Name>InvalidVM</Name>
+                <Snapshot>Snapshot1</Snapshot>
+                <TargetDC>redmonddc</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="restoreOrCreateOrDeleteSnapshotShouldSucceedIfVmIsShutdown">
+            <VirtualMachine>
+                <Name>PoweredOffVM</Name>
+                <NewSnapshot>NewSnapShot</NewSnapshot>
+                <Snapshot>Snapshot2</Snapshot>
+                <TargetDC>redmonddc</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="restoreSnapshotShouldThrowIfMultipleVmsWithSameNameExistInADC">
+            <VirtualMachine>
+                <Name>DuplicateVM</Name>
+                <Snapshot>Snapshot1</Snapshot>
+                <TargetDC>fareastdc</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="restoreOrCreateOrDeleteSnapshotShouldSucceedForVMsEvenIfCaseDoesNotMatch">
+            <VirtualMachine>
+                <Name>win2012r2</Name>
+                <NewSnapshot>NewSnapshot</NewSnapshot>
+                <Snapshot>Snapshot2</Snapshot>
+                <TargetDC>redmonddc</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+    </TestResource>
+    <TestResource names="rami.abughazaleh">
+        <Connection>
+            <UserName>Administrator@vsphere.local</UserName>
+            <Password>password</Password>
+            <DataCenter>Datacenter</DataCenter>
+        </Connection>
+        <OperationTimeout>0</OperationTimeout>
+        <TestMethod name="cloneVMFromTemplateWithTargetComputeAsESXiHostShouldSucceed">
+            <TestResource>
+                <Template>win2012r2-standard</Template>
+                <NewVmName>newVmOnEsxiHost</NewVmName>
+                <TargetDC>Datacenter</TargetDC>
+                <ComputeType>ESXi Host</ComputeType>
+                <ComputeName>192.168.0.209</ComputeName>
+                <Datastore>Datastore</Datastore>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="cloneVMFromTemplateWithTargetComputeAsClusterShouldSucceed">
+            <TestResource>
+                <Template>win2012r2-standard</Template>
+                <NewVmName>newVmOnCluster</NewVmName>
+                <TargetDC>Datacenter</TargetDC>
+                <ComputeType>Cluster</ComputeType>
+                <ComputeName>Cluster</ComputeName>
+                <Datastore>Datastore</Datastore>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="cloneVMFromTemplateWithTargetComputeAsResourcePoolShouldSucceed">
+            <TestResource>
+                <Template>win2012r2-standard</Template>
+                <NewVmName>newVmOnResourcePool</NewVmName>
+                <TargetDC>Datacenter</TargetDC>
+                <ComputeType>Resource Pool</ComputeType>
+                <ComputeName>Resource Pool</ComputeName>
+                <Datastore>Datastore</Datastore>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="cloneVMFromTemplateWithInvalidTargetComputeShouldFail">
+            <TestResource>
+                <Template>win2012r2-standard</Template>
+                <NewVmName>newVM</NewVmName>
+                <TargetDC>Datacenter</TargetDC>
+                <ComputeType>Invalid Compute</ComputeType>
+                <ComputeName>Resource Pool</ComputeName>
+                <Datastore>Datastore</Datastore>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="cloneVMFromNonExistingTemplateShouldFail">
+            <TestResource>
+                <Template>InvalidTemplate</Template>
+                <NewVmName>newVM</NewVmName>
+                <TargetDC>Datacenter</TargetDC>
+                <ComputeType>Resource Pool</ComputeType>
+                <ComputeName>Resource Pool</ComputeName>
+                <Datastore>Datastore</Datastore>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="cloneVMFromTemplateWithNonExistingTargetDatacenterShouldFail">
+            <TestResource>
+                <Template>win2012r2-standard</Template>
+                <NewVmName>newVM</NewVmName>
+                <TargetDC>InvalidDc</TargetDC>
+                <ComputeType>Resource Pool</ComputeType>
+                <ComputeName>Resource Pool</ComputeName>
+                <Datastore>Datastore</Datastore>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="cloneVMFromTemplateWithNonExistingTargetESXiShouldFail">
+            <TestResource>
+                <Template>win2012r2-standard</Template>
+                <NewVmName>newVM</NewVmName>
+                <TargetDC>Datacenter</TargetDC>
+                <ComputeType>ESXi Host</ComputeType>
+                <ComputeName>InvalidHost</ComputeName>
+                <Datastore>Datastore</Datastore>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="cloneVMFromTemplateWithNonExistingTargetCloudShouldFail">
+            <TestResource>
+                <Template>win2012r2-standard</Template>
+                <NewVmName>newVM</NewVmName>
+                <TargetDC>Datacenter</TargetDC>
+                <ComputeType>Cluster</ComputeType>
+                <ComputeName>InvalidCluster</ComputeName>
+                <Datastore>Datastore</Datastore>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="cloneVMFromTemplateWithNonExistingTargetResourcePoolShouldFail">
+            <TestResource>
+                <Template>win2012r2-standard</Template>
+                <NewVmName>newVM</NewVmName>
+                <TargetDC>Datacenter</TargetDC>
+                <ComputeType>Resource Pool</ComputeType>
+                <ComputeName>InvalidRp</ComputeName>
+                <Datastore>Datastore</Datastore>
+            </TestResource>
+        </TestMethod>
+        <TestMethod name="createSnapshotWithSaveVMMemoryShouldSucceed">
+            <VirtualMachine>
+                <Name>Win2012R2</Name>
+                <NewSnapshot>NewSnapshot</NewSnapshot>
+                <TargetDC>Datacenter</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="createSnapshotWithQuiesceShouldSucceed">
+            <VirtualMachine>
+                <Name>Win2012R2</Name>
+                <NewSnapshot>NewSnapshot</NewSnapshot>
+                <TargetDC>Datacenter</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="startAndStopOnAVmShouldNotThrow">
+            <VirtualMachine>
+                <Name>Win2012R2</Name>
+                <TargetDC>Datacenter</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="startAndStopVmShouldSucceedForLinuxVM">
+            <VirtualMachine>
+                <Name>startAndStopVmShouldSucceedForLinuxVM</Name>
+                <TargetDC>Datacenter</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="powerOnAndPowerOffVmShouldSucceed">
+            <VirtualMachine>
+                <Name>Win2012R2</Name>
+                <TargetDC>Datacenter</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="restoreOrDeleteSnapshotShouldThrowIfSnapshotDoesNotExist">
+            <VirtualMachine>
+                <Name>Win2012R2</Name>
+                <Snapshot>InvalidSnapshot</Snapshot>
+                <TargetDC>Datacenter</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="restoreSnapshotShouldThrowIfVmDoesNotExist">
+            <VirtualMachine>
+                <Name>InvalidVM</Name>
+                <Snapshot>Snapshot1</Snapshot>
+                <TargetDC>Datacenter</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="restoreOrCreateOrDeleteSnapshotShouldSucceedIfVmIsShutdown">
+            <VirtualMachine>
+                <Name>Win2012R2</Name>
+                <NewSnapshot>NewSnapShot</NewSnapshot>
+                <Snapshot>Snapshot2</Snapshot>
+                <TargetDC>Datacenter</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="restoreSnapshotShouldThrowIfMultipleVmsWithSameNameExistInADC">
+            <VirtualMachine>
+                <Name>Win2012R2Duplicate</Name>
+                <Snapshot>Snapshot1</Snapshot>
+                <TargetDC>Datacenter</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+        <TestMethod name="restoreOrCreateOrDeleteSnapshotShouldSucceedForVMsEvenIfCaseDoesNotMatch">
+            <VirtualMachine>
+                <Name>win2012r2</Name>
+                <NewSnapshot>NewSnapshot</NewSnapshot>
+                <Snapshot>Snapshot2</Snapshot>
+                <TargetDC>Datacenter</TargetDC>
+            </VirtualMachine>
+        </TestMethod>
+    </TestResource>
+</TestResources>

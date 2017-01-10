@@ -4,6 +4,11 @@ public class InMemoryVMWareImplPlatformTests extends VMWarePlatformTests {
     public IVMWare getVmWareImpl() {
         return new InMemoryVMWareImpl();
     }
+    
+    @Override
+    public TestResourceFactory getTestResourceFactory(){
+        return new TestResourceFactory("inmemory");
+    }
 
     @Override
     public String getvCenterUrl() {

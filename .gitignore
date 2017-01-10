@@ -84,3 +84,5 @@ _package
 tests/Tools/target
 src/Tools/target/
 /_temp
+/target/
+/src/Tools/vmOpsTool/target/

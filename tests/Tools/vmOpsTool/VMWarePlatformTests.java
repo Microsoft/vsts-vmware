@@ -1,23 +1,27 @@
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 
 public abstract class VMWarePlatformTests {
-    private String vCenterUserName = "Administrator@vsphere.local";
-    private String vCenterPassword = "Password~1";
-    private String vCenterUrl = getvCenterUrl();
-    private String defaultTargetDC = "fareastdc";
-    private ConnectionData connData = new ConnectionData(vCenterUrl, vCenterUserName, vCenterPassword, defaultTargetDC, true);
-    private IVMWare vmWareImpl = getVmWareImpl();
-    private String snapshotOne = "Snapshot1";
-    private String ubuntuTemplate = "Ubuntu";
-    String linuxCustomizationSpec = "Linux Spec";
-    private String snapshotTwo = "Snapshot2";
+    
+    private final String vCenterUrl = getvCenterUrl();
+    
+    private final IVMWare vmWareImpl = getVmWareImpl();
+    
+    private final TestResourceFactory testResourceFactory = getTestResourceFactory();
+    
+    private final int operationTimeout = testResourceFactory.GetOperationTimeoutValue();
 
     public abstract IVMWare getVmWareImpl();
+    
+    public abstract TestResourceFactory getTestResourceFactory();
 
     public abstract String getvCenterUrl();
-
+    
+    @Rule public TestName testName = new TestName();
+    
     // Common for all Operations
     // The following two scenarios needs to be validated during stress testing
     // restoreSnapshotShouldUseASessionTimeoutOfSixtyMinutes
@@ -28,74 +32,125 @@ public abstract class VMWarePlatformTests {
     // Clone VM from template action tests
     @Test
     public void cloneVMFromTemplateWithTargetComputeAsESXiHostShouldSucceed() throws Exception {
-        String newVmName = "newVmOnEsxiHost";
-        String targetDC = "redmonddc";
-        String computeType = "ESXi Host";
-        String computeName = "idcvstt-lab318.corp.microsoft.com";
-        String datastore = "datastore1";
-        String description = "Creating new VM from ubuntuVM template on ESXi host";
-        connData.setTargetDC(targetDC);
+        
+        String description = "Creating new VM from VM template on ESXi host";
+        
+        ConnectionData connData = GetTestConnectionData();
+        TestResource testResource = GetTestResource();
+        
+        connData.setTargetDC(testResource.TargetDC);
 
-        vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+        try
+        {
+            vmWareImpl.cloneVMFromTemplate(
+                testResource.Template,
+                testResource.NewVmName,
+                testResource.ComputeType,
+                testResource.ComputeName,
+                testResource.Datastore,
+                testResource.CustomizationSpec,
+                description,
+                operationTimeout,
+                connData);
 
-        assertThat(vmWareImpl.isVMExists(newVmName, connData)).isEqualTo(true);
+            assertThat(vmWareImpl.isVMExists(testResource.NewVmName, connData)).isEqualTo(true);
+        }
+        finally
+        {
+            vmWareImpl.deleteVM(testResource.NewVmName, connData);
+        }
 
-        vmWareImpl.deleteVM(newVmName, connData);
-
-        assertThat(vmWareImpl.isVMExists(newVmName, connData)).isEqualTo(false);
+        assertThat(vmWareImpl.isVMExists(testResource.NewVmName, connData)).isEqualTo(false);
     }
 
     @Test
     public void cloneVMFromTemplateWithTargetComputeAsClusterShouldSucceed() throws Exception {
-        String newVmName = "newVmOnCluster";
-        String targetDC = "fareastdc";
-        String computeType = "Cluster";
-        String computeName = "fareastcluster";
-        String datastore = "SharedStorage";
-        String description = "Creating new VM from ubuntuVM template on cluster";
-        connData.setTargetDC(targetDC);
+        
+        String description = "Creating new VM from VM template on cluster";
+        
+        ConnectionData connData = GetTestConnectionData();
+        TestResource testResource = GetTestResource();
+        
+        connData.setTargetDC(testResource.TargetDC);
 
-        vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+        try
+        {
+            vmWareImpl.cloneVMFromTemplate(
+                    testResource.Template,
+                    testResource.NewVmName,
+                    testResource.ComputeType,
+                    testResource.ComputeName,
+                    testResource.Datastore,
+                    testResource.CustomizationSpec,
+                    description,
+                    operationTimeout,
+                    connData);
 
-        assertThat(vmWareImpl.isVMExists(newVmName, connData)).isEqualTo(true);
+            assertThat(vmWareImpl.isVMExists(testResource.NewVmName, connData)).isEqualTo(true);
+        }
+        finally
+        {
+            vmWareImpl.deleteVM(testResource.NewVmName, connData);
+        }
 
-        vmWareImpl.deleteVM(newVmName, connData);
-
-        assertThat(vmWareImpl.isVMExists(newVmName, connData)).isEqualTo(false);
+        assertThat(vmWareImpl.isVMExists(testResource.NewVmName, connData)).isEqualTo(false);
     }
 
     @Test
     public void cloneVMFromTemplateWithTargetComputeAsResourcePoolShouldSucceed() throws Exception {
-        String newVmName = "newVmOnResourcePool";
-        String targetDC = "fareastdc";
-        String computeType = "Resource Pool";
-        String computeName = "fareastrp";
-        String datastore = "SharedStorage";
-        String description = "Creating new VM from ubuntuVM template on resource pool";
-        connData.setTargetDC(targetDC);
+        
+        String description = "Creating new VM from VM template on resource pool";
+        
+        ConnectionData connData = GetTestConnectionData();
+        TestResource testResource = GetTestResource();
+        
+        connData.setTargetDC(testResource.TargetDC);
 
-        vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+        try
+        {
+            vmWareImpl.cloneVMFromTemplate(
+                testResource.Template,
+                testResource.NewVmName,
+                testResource.ComputeType,
+                testResource.ComputeName,
+                testResource.Datastore,
+                testResource.CustomizationSpec,
+                description,
+                operationTimeout,
+                connData);
 
-        assertThat(vmWareImpl.isVMExists(newVmName, connData)).isEqualTo(true);
+            assertThat(vmWareImpl.isVMExists(testResource.NewVmName, connData)).isEqualTo(true);
+        }
+        finally
+        {
+            vmWareImpl.deleteVM(testResource.NewVmName, connData);
+        }
 
-        vmWareImpl.deleteVM(newVmName, connData);
-
-        assertThat(vmWareImpl.isVMExists(newVmName, connData)).isEqualTo(false);
+        assertThat(vmWareImpl.isVMExists(testResource.NewVmName, connData)).isEqualTo(false);
     }
 
     @Test
     public void cloneVMFromTemplateWithInvalidTargetComputeShouldFail() throws Exception {
-        String newVmName = "newVM";
-        String targetDC = "fareastdc";
-        String computeType = "Invalid Compute";
-        String computeName = "fareastrp";
-        String datastore = "datastore2";
+        
         String description = "Creating new VM with invalid template";
-        connData.setTargetDC(targetDC);
+        
+        ConnectionData connData = GetTestConnectionData();
+        TestResource testResource = GetTestResource();
+        
+        connData.setTargetDC(testResource.TargetDC);
 
         Exception exp = null;
         try {
-            vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+            vmWareImpl.cloneVMFromTemplate(
+                    testResource.Template,
+                    testResource.NewVmName,
+                    testResource.ComputeType,
+                    testResource.ComputeName,
+                    testResource.Datastore,
+                    testResource.CustomizationSpec,
+                    description,
+                    operationTimeout,
+                    connData);
         } catch (Exception e) {
             exp = e;
         }
@@ -104,18 +159,26 @@ public abstract class VMWarePlatformTests {
 
     @Test
     public void cloneVMFromNonExistingTemplateShouldFail() throws Exception {
-        String newVmName = "newVM";
-        String nonExistingTemplate = "InvalidTemplate";
-        String targetDC = "fareastdc";
-        String computeType = "Resource Pool";
-        String computeName = "fareastrp";
-        String datastore = "datastore2";
+        
         String description = "Creating new VM with invalid template";
-        connData.setTargetDC(targetDC);
+        
+        ConnectionData connData = GetTestConnectionData();
+        TestResource testResource = GetTestResource();
+        
+        connData.setTargetDC(testResource.TargetDC);
 
         Exception exp = null;
         try {
-            vmWareImpl.cloneVMFromTemplate(nonExistingTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+            vmWareImpl.cloneVMFromTemplate(
+                    testResource.Template,
+                    testResource.NewVmName,
+                    testResource.ComputeType,
+                    testResource.ComputeName,
+                    testResource.Datastore,
+                    testResource.CustomizationSpec,
+                    description,
+                    operationTimeout,
+                    connData);
         } catch (Exception e) {
             exp = e;
         }
@@ -124,17 +187,26 @@ public abstract class VMWarePlatformTests {
 
     @Test
     public void cloneVMFromTemplateWithNonExistingTargetDatacenterShouldFail() throws Exception {
-        String newVmName = "newVM";
-        String targetDC = "InvalidDc";
-        String computeType = "Resource Pool";
-        String computeName = "fareastrp";
-        String datastore = "datastore1";
-        String description = "Creating new VM from ubuntuVM template on invalid data center";
-        connData.setTargetDC(targetDC);
+        
+        String description = "Creating new VM from VM template on invalid data center";
+        
+        ConnectionData connData = GetTestConnectionData();
+        TestResource testResource = GetTestResource();
+        
+        connData.setTargetDC(testResource.TargetDC);
 
         Exception exp = null;
         try {
-            vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+            vmWareImpl.cloneVMFromTemplate(
+                    testResource.Template,
+                    testResource.NewVmName,
+                    testResource.ComputeType,
+                    testResource.ComputeName,
+                    testResource.Datastore,
+                    testResource.CustomizationSpec,
+                    description,
+                    operationTimeout,
+                    connData);
         } catch (Exception e) {
             exp = e;
         }
@@ -142,18 +214,27 @@ public abstract class VMWarePlatformTests {
     }
 
     @Test
-    public void cloneVMFromTemplateWithNonExistingTargetESXiShouldFail() {
-        String newVmName = "newVM";
-        String targetDC = "fareastdc";
-        String computeType = "ESXi Host";
-        String computeName = "InvalidHost";
-        String datastore = "datastore1";
-        String description = "Creating new VM from ubuntuVM template on non existing ESXi host";
-        connData.setTargetDC(targetDC);
+    public void cloneVMFromTemplateWithNonExistingTargetESXiShouldFail() throws Exception {
+        
+        String description = "Creating new VM from VM template on non existing ESXi host";
+        
+        ConnectionData connData = GetTestConnectionData();
+        TestResource testResource = GetTestResource();
+        
+        connData.setTargetDC(testResource.TargetDC);
 
         Exception exp = null;
         try {
-            vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+            vmWareImpl.cloneVMFromTemplate(
+                    testResource.Template,
+                    testResource.NewVmName,
+                    testResource.ComputeType,
+                    testResource.ComputeName,
+                    testResource.Datastore,
+                    testResource.CustomizationSpec,
+                    description,
+                    operationTimeout,
+                    connData);
         } catch (Exception e) {
             exp = e;
         }
@@ -161,18 +242,27 @@ public abstract class VMWarePlatformTests {
     }
 
     @Test
-    public void cloneVMFromTemplateWithNonExistingTargetCloudShouldFail() {
-        String newVmName = "newVM";
-        String targetDC = "fareastdc";
-        String computeType = "Cluster";
-        String computeName = "InvalidCluster";
-        String datastore = "datastore1";
-        String description = "Creating new VM from ubuntuVM template on non existing cluster";
-        connData.setTargetDC(targetDC);
+    public void cloneVMFromTemplateWithNonExistingTargetCloudShouldFail() throws Exception {
+        
+        String description = "Creating new VM from VM template on non existing cluster";
+        
+        ConnectionData connData = GetTestConnectionData();
+        TestResource testResource = GetTestResource();
+        
+        connData.setTargetDC(testResource.TargetDC);
 
         Exception exp = null;
         try {
-            vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+            vmWareImpl.cloneVMFromTemplate(
+                    testResource.Template,
+                    testResource.NewVmName,
+                    testResource.ComputeType,
+                    testResource.ComputeName,
+                    testResource.Datastore,
+                    testResource.CustomizationSpec,
+                    description,
+                    operationTimeout,
+                    connData);
         } catch (Exception e) {
             exp = e;
         }
@@ -180,18 +270,27 @@ public abstract class VMWarePlatformTests {
     }
 
     @Test
-    public void cloneVMFromTemplateWithNonExistingTargetResourcePoolShouldFail() {
-        String newVmName = "newVM";
-        String targetDC = "fareastdc";
-        String computeType = "Resource Pool";
-        String computeName = "InvalidRp";
-        String datastore = "datastore1";
+    public void cloneVMFromTemplateWithNonExistingTargetResourcePoolShouldFail() throws Exception {
+        
         String description = "Creating new VM from ubuntuVM template on non existing resource pool";
-        connData.setTargetDC(targetDC);
+        
+        ConnectionData connData = GetTestConnectionData();
+        TestResource testResource = GetTestResource();
+        
+        connData.setTargetDC(testResource.TargetDC);
 
         Exception exp = null;
         try {
-            vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+            vmWareImpl.cloneVMFromTemplate(
+                    testResource.Template,
+                    testResource.NewVmName,
+                    testResource.ComputeType,
+                    testResource.ComputeName,
+                    testResource.Datastore,
+                    testResource.CustomizationSpec,
+                    description,
+                    operationTimeout,
+                    connData);
         } catch (Exception e) {
             exp = e;
         }
@@ -199,20 +298,26 @@ public abstract class VMWarePlatformTests {
     }
 
     @Test
-    public void connectShouldThrowForInvalidCredentials() {
+    public void connectShouldThrowForInvalidCredentials() throws Exception {
+        
+        ConnectionData connData = GetTestConnectionData();
+        
         Exception exp = null;
         try {
-            vmWareImpl.connect(new ConnectionData(vCenterUrl, vCenterUserName, "InvalidPassword", defaultTargetDC, true));
+            vmWareImpl.connect(connData);
         } catch (Exception e) {
             exp = e;
         }
         assertThat(exp).isNotNull();
     }
 
-    public void connectShouldThrowWithoutSkipCACheck() {
+    public void connectShouldThrowWithoutSkipCACheck() throws Exception {
+        
+        ConnectionData connData = GetTestConnectionData();
+        
         Exception exp = null;
         try {
-            vmWareImpl.connect(new ConnectionData(vCenterUrl, vCenterUserName, vCenterPassword, defaultTargetDC, false));
+            vmWareImpl.connect(connData);
         } catch (Exception e) {
             exp = e;
         }
@@ -221,89 +326,101 @@ public abstract class VMWarePlatformTests {
 
     @Test
     public void connectShouldNotThrowOnSuccessfulAuthentication() throws Exception {
+        
+        ConnectionData connData = GetTestConnectionData();
+        
         vmWareImpl.connect(connData);
     }
 
     @Test
     public void createSnapshotWithSaveVMMemoryShouldSucceed() throws Exception {
-        String vmName = "Win8";
-        String newSnapshot = "NewSnapshot";
-        String targetDC = "fareastdc";
-        connData.setTargetDC(targetDC);
 
-        vmWareImpl.createSnapshot(vmName, newSnapshot, true, false, "Snapshot created during platform tests", 1200, connData);
+        ConnectionData connData = GetTestConnectionData();
+        TestVirtualMachine vm = GetTestVirtualMachine();
+        
+        connData.setTargetDC(vm.TargetDC);
 
-        assertThat(vmWareImpl.getCurrentSnapshot(vmName, connData)).isEqualTo(newSnapshot);
+        vmWareImpl.createSnapshot(vm.Name, vm.NewSnapshot, true, false, "Snapshot created during platform tests", operationTimeout, connData);
 
-        vmWareImpl.deleteSnapshot(vmName, newSnapshot, connData);
+        assertThat(vmWareImpl.getCurrentSnapshot(vm.Name, connData)).isEqualTo(vm.NewSnapshot);
+
+        vmWareImpl.deleteSnapshot(vm.Name, vm.NewSnapshot, connData);
     }
 
     @Test
     public void createSnapshotWithQuiesceShouldSucceed() throws Exception {
-        String vmName = "Win7";
-        String newSnapshot = "NewSnapshot";
-        String targetDC = "redmonddc";
-        connData.setTargetDC(targetDC);
+        ConnectionData connData = GetTestConnectionData();
+        TestVirtualMachine vm = GetTestVirtualMachine();
+        
+        connData.setTargetDC(vm.TargetDC);
 
-        vmWareImpl.createSnapshot(vmName, newSnapshot, false, true, "Snapshot created during platform tests", 1200, connData);
+        vmWareImpl.createSnapshot(vm.Name, vm.NewSnapshot, false, true, "Snapshot created during platform tests", operationTimeout, connData);
 
-        assertThat(vmWareImpl.getCurrentSnapshot(vmName, connData)).isEqualTo(newSnapshot);
+        assertThat(vmWareImpl.getCurrentSnapshot(vm.Name, connData)).isEqualTo(vm.NewSnapshot);
 
-        vmWareImpl.deleteSnapshot(vmName, newSnapshot, connData);
+        vmWareImpl.deleteSnapshot(vm.Name, vm.NewSnapshot, connData);
     }
 
     @Test
     public void startAndStopOnAVmShouldNotThrow() throws Exception {
-        String vmName = "startAndStopWindows";
-        String targetDC = "redmonddc";
-        connData.setTargetDC(targetDC);
+        
+        ConnectionData connData = GetTestConnectionData();
+        TestVirtualMachine vm = GetTestVirtualMachine();
+        
+        connData.setTargetDC(vm.TargetDC);
 
-        vmWareImpl.powerOnVM(vmName, 1200, connData);
-        assertThat(vmWareImpl.isVMPoweredOn(vmName, true, connData)).isEqualTo(true);
-        vmWareImpl.shutdownVM(vmName, 1200, connData);
-        assertThat(vmWareImpl.isVMPoweredOn(vmName, false, connData)).isEqualTo(false);
+        vmWareImpl.powerOnVM(vm.Name, operationTimeout, connData);
+        assertThat(vmWareImpl.isVMPoweredOn(vm.Name, true, connData)).isEqualTo(true);
+        vmWareImpl.shutdownVM(vm.Name, operationTimeout, connData);
+        assertThat(vmWareImpl.isVMPoweredOn(vm.Name, false, connData)).isEqualTo(false);
     }
 
     @Test
     public void startAndStopVmShouldSucceedForLinuxVM() throws Exception {
-        String vmName = "startAndStopUbuntu";
-        String targetDC = "fareastdc";
-        connData.setTargetDC(targetDC);
+        
+        ConnectionData connData = GetTestConnectionData();
+        TestVirtualMachine vm = GetTestVirtualMachine();
+        
+        connData.setTargetDC(vm.TargetDC);
 
-        vmWareImpl.powerOnVM(vmName, 1200, connData);
-        assertThat(vmWareImpl.isVMPoweredOn(vmName, true, connData)).isEqualTo(true);
-        vmWareImpl.powerOnVM(vmName, 1200, connData);
-        assertThat(vmWareImpl.isVMPoweredOn(vmName, true, connData)).isEqualTo(true);
+        vmWareImpl.powerOnVM(vm.Name, operationTimeout, connData);
+        assertThat(vmWareImpl.isVMPoweredOn(vm.Name, true, connData)).isEqualTo(true);
+        vmWareImpl.powerOnVM(vm.Name, operationTimeout, connData);
+        assertThat(vmWareImpl.isVMPoweredOn(vm.Name, true, connData)).isEqualTo(true);
 
-        vmWareImpl.shutdownVM(vmName, 1200, connData);
-        assertThat(vmWareImpl.isVMPoweredOn(vmName, false, connData)).isEqualTo(false);
-        vmWareImpl.shutdownVM(vmName, 1200, connData);
-        assertThat(vmWareImpl.isVMPoweredOn(vmName, false, connData)).isEqualTo(false);
+        vmWareImpl.shutdownVM(vm.Name, operationTimeout, connData);
+        assertThat(vmWareImpl.isVMPoweredOn(vm.Name, false, connData)).isEqualTo(false);
+        vmWareImpl.shutdownVM(vm.Name, operationTimeout, connData);
+        assertThat(vmWareImpl.isVMPoweredOn(vm.Name, false, connData)).isEqualTo(false);
     }
 
     @Test
     public void powerOnAndPowerOffVmShouldSucceed() throws Exception {
-        String vmName = "powerOnAndPowerOff";
-        String targetDC = "fareastdc";
-        connData.setTargetDC(targetDC);
+        
+        ConnectionData connData = GetTestConnectionData();
+        TestVirtualMachine vm = GetTestVirtualMachine();
+        
+        connData.setTargetDC(vm.TargetDC);
 
-        vmWareImpl.powerOnVM(vmName, 1200, connData);
-        assertThat(vmWareImpl.isVMPoweredOn(vmName, true, connData)).isEqualTo(true);
+        vmWareImpl.powerOnVM(vm.Name, operationTimeout, connData);
+        assertThat(vmWareImpl.isVMPoweredOn(vm.Name, true, connData)).isEqualTo(true);
 
-        vmWareImpl.powerOffVM(vmName, connData);
-        assertThat(vmWareImpl.isVMPoweredOn(vmName, false, connData)).isEqualTo(false);
+        vmWareImpl.powerOffVM(vm.Name, connData);
+        assertThat(vmWareImpl.isVMPoweredOn(vm.Name, false, connData)).isEqualTo(false);
     }
 
     // Common for restore/delete snapshot operations
     @Test
-    public void restoreOrDeleteSnapshotShouldThrowIfSnapshotDoesNotExist() {
+    public void restoreOrDeleteSnapshotShouldThrowIfSnapshotDoesNotExist() throws Exception {
         Exception exp = null;
-        String vmName = "Win2012R2";
-        String targetDC = "redmonddc";
-        connData.setTargetDC(targetDC);
+        
+        ConnectionData connData = GetTestConnectionData();
+        TestVirtualMachine vm = GetTestVirtualMachine();
+        
+        connData.setTargetDC(vm.TargetDC);
 
         try {
-            vmWareImpl.restoreSnapshot(vmName, "InvalidSnapshot", 1200, connData);
+            vmWareImpl.restoreSnapshot(vm.Name, vm.Snapshot, operationTimeout, connData);
         } catch (Exception e) {
             exp = e;
         }
@@ -311,7 +428,7 @@ public abstract class VMWarePlatformTests {
 
         exp = null;
         try {
-            vmWareImpl.deleteSnapshot("Win2012R2", "InvalidSnapshot", connData);
+            vmWareImpl.deleteSnapshot(vm.Name, vm.Snapshot, connData);
         } catch (Exception e) {
             exp = e;
         }
@@ -320,13 +437,16 @@ public abstract class VMWarePlatformTests {
 
     // Common for Snapshot operations
     @Test
-    public void restoreSnapshotShouldThrowIfVmDoesNotExist() {
+    public void restoreSnapshotShouldThrowIfVmDoesNotExist() throws Exception {
         Exception exp = null;
-        String targetDC = "redmonddc";
-        connData.setTargetDC(targetDC);
+        
+        ConnectionData connData = GetTestConnectionData();
+        TestVirtualMachine vm = GetTestVirtualMachine();
+        
+        connData.setTargetDC(vm.TargetDC);
 
         try {
-            vmWareImpl.restoreSnapshot("InvalidVM", snapshotOne, 1200, connData);
+            vmWareImpl.restoreSnapshot(vm.Name, vm.Snapshot, operationTimeout, connData);
         } catch (Exception e) {
             exp = e;
         }
@@ -335,30 +455,33 @@ public abstract class VMWarePlatformTests {
 
     @Test
     public void restoreOrCreateOrDeleteSnapshotShouldSucceedIfVmIsShutdown() throws Exception {
-        String vmName = "PoweredOffVM";
-        String newSnapshot = "NewSnapShot";
-        String targetDC = "redmonddc";
-        connData.setTargetDC(targetDC);
+        
+        ConnectionData connData = GetTestConnectionData();
+        TestVirtualMachine vm = GetTestVirtualMachine();
+        
+        connData.setTargetDC(vm.TargetDC);
 
-        vmWareImpl.createSnapshot(vmName, newSnapshot, false, false, "Snapshot created during platform tests", 1200, connData);
-        assertThat(vmWareImpl.getCurrentSnapshot(vmName, connData)).isEqualTo(newSnapshot);
+        vmWareImpl.createSnapshot(vm.Name, vm.NewSnapshot, false, false, "Snapshot created during platform tests", operationTimeout, connData);
+        assertThat(vmWareImpl.getCurrentSnapshot(vm.Name, connData)).isEqualTo(vm.NewSnapshot);
 
-        vmWareImpl.restoreSnapshot(vmName, snapshotTwo, 1200, connData);
-        assertThat(vmWareImpl.getCurrentSnapshot(vmName, connData)).isEqualTo(snapshotTwo);
+        vmWareImpl.restoreSnapshot(vm.Name, vm.Snapshot, operationTimeout, connData);
+        assertThat(vmWareImpl.getCurrentSnapshot(vm.Name, connData)).isEqualTo(vm.Snapshot);
 
-        vmWareImpl.deleteSnapshot(vmName, newSnapshot, connData);
-        assertThat(vmWareImpl.isSnapshotExists(vmName, newSnapshot, connData)).isEqualTo(false);
+        vmWareImpl.deleteSnapshot(vm.Name, vm.NewSnapshot, connData);
+        assertThat(vmWareImpl.isSnapshotExists(vm.Name, vm.NewSnapshot, connData)).isEqualTo(false);
     }
 
     @Test
     public void restoreSnapshotShouldThrowIfMultipleVmsWithSameNameExistInADC() throws Exception {
-        String vmName = "DuplicateVM";
-        String targetDC = "fareastdc";
-        connData.setTargetDC(targetDC);
+        
+        ConnectionData connData = GetTestConnectionData();
+        TestVirtualMachine vm = GetTestVirtualMachine();
+        
+        connData.setTargetDC(vm.TargetDC);
         Exception exp = null;
 
         try {
-            vmWareImpl.restoreSnapshot(vmName, snapshotOne, 1200, connData);
+            vmWareImpl.restoreSnapshot(vm.Name, vm.Snapshot, operationTimeout, connData);
         } catch (Exception e) {
             exp = e;
         }
@@ -368,21 +491,33 @@ public abstract class VMWarePlatformTests {
     @Test
     public void restoreOrCreateOrDeleteSnapshotShouldSucceedForVMsEvenIfCaseDoesNotMatch() throws Exception {
 
-        String vmName = "win2012r2";
-        String newSnapshot = "NewSnapshot";
-        String targetDC = "redmonddc";
-        connData.setTargetDC(targetDC);
+        ConnectionData connData = GetTestConnectionData();
+        TestVirtualMachine vm = GetTestVirtualMachine();
+        
+        connData.setTargetDC(vm.TargetDC);
 
-        vmWareImpl.createSnapshot(vmName, newSnapshot, false, false, "Snapshot created during platform tests", 1200, connData);
+        vmWareImpl.createSnapshot(vm.Name, vm.NewSnapshot, false, false, "Snapshot created during platform tests", operationTimeout, connData);
 
-        assertThat(vmWareImpl.getCurrentSnapshot(vmName, connData)).isEqualTo(newSnapshot);
+        assertThat(vmWareImpl.getCurrentSnapshot(vm.Name, connData)).isEqualTo(vm.NewSnapshot);
 
-        vmWareImpl.restoreSnapshot(vmName, snapshotTwo, 1200, connData);
+        vmWareImpl.restoreSnapshot(vm.Name, vm.Snapshot, operationTimeout, connData);
 
-        assertThat(vmWareImpl.getCurrentSnapshot(vmName, connData)).isEqualTo(snapshotTwo);
+        assertThat(vmWareImpl.getCurrentSnapshot(vm.Name, connData)).isEqualTo(vm.Snapshot);
 
-        vmWareImpl.deleteSnapshot(vmName, newSnapshot, connData);
+        vmWareImpl.deleteSnapshot(vm.Name, vm.NewSnapshot, connData);
 
-        assertThat(vmWareImpl.isSnapshotExists(vmName, newSnapshot, connData)).isEqualTo(false);
+        assertThat(vmWareImpl.isSnapshotExists(vm.Name, vm.NewSnapshot, connData)).isEqualTo(false);
+    }
+
+    private TestResource GetTestResource() throws Exception {
+        return testResourceFactory.GetTestResource(testName.getMethodName());
+    }
+
+    private ConnectionData GetTestConnectionData() throws Exception {
+        return testResourceFactory.GetConnectionData(vCenterUrl, testName.getMethodName());
+    }
+
+    private TestVirtualMachine GetTestVirtualMachine() throws Exception {
+        return testResourceFactory.GetVirtualMachine(testName.getMethodName());
     }
 }

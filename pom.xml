@@ -2,82 +2,104 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.microsoft.vmware</groupId>
-  <artifactId>vmware-integration</artifactId>
-  <version>1.0</version>
-  <packaging>pom</packaging>
+    <groupId>com.microsoft.vmware</groupId>
+    <artifactId>vmware-integration</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
 
-  <modules>
-    <module>src/Tools</module>
-    <module>tests/Tools</module>
-  </modules>
+    <modules>
+        <module>src/Tools</module>
+        <module>tests/Tools</module>
+    </modules>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <build.profile.id>dev</build.profile.id>
-    <skip.jacoco.check>true</skip.jacoco.check>
-    <skip.unittests>true</skip.unittests>
-  </properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <build.profile.id>dev</build.profile.id>
+        <skip.jacoco.check>true</skip.jacoco.check>
+        <skip.unittests>true</skip.unittests>
+        <main.basedir>${project.basedir}</main.basedir>
+    </properties>
   
-  <profiles>
-    <profile>
-        <id>ci</id>
+    <profiles>
+        <profile>
+            <id>ci</id>
             <properties>
                 <build.profile.id>ci</build.profile.id>
                 <!-- All tests are run. -->
                 <skip.jacoco.check>false</skip.jacoco.check>
                 <skip.unittests>false</skip.unittests>
             </properties>
-    </profile>
-    <profile>
-        <id>dev</id>
-    </profile>
-  </profiles>
+        </profile>
+        <profile>
+            <id>dev</id>
+        </profile>
+    </profiles>
 
-  <build>
-    <outputDirectory>${session.executionRootDirectory}/_build</outputDirectory>
-    <plugins>
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.7.5.201505241946</version>
-        <executions>
-          <execution>
-            <id>prepare-unit-test-agent</id>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-            <configuration>
-              <destFile>${session.executionRootDirectory}/_build/testReports/codecoverage/jacoco.exec</destFile>
-              <append>true</append>
-            </configuration>
-          </execution>
-          <execution>
-            <id>pre-integration-test</id>
-            <phase>integration-test</phase>
-            <goals>
-                <goal>prepare-agent</goal>
-            </goals>
-           <configuration>
-              <destFile>${session.executionRootDirectory}/_build/testReports/codecoverage/jacoco.exec</destFile>
-              <append>true</append>
-            </configuration>
-        </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
-        <configuration>
-          <includes>
-            <include>**</include>
-          </includes>
-          <source>1.8</source>
-          <target>1.8</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+    <build>
+        <outputDirectory>${session.executionRootDirectory}/_build</outputDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <exec executable="cmd.exe">
+                                    <arg value="/c"/>
+                                    <arg value="&quot;%M2_HOME%\bin\mvn.bat&quot; install:install-file -DgroupId=com.vmware -DartifactId=vmware-vim25 -Dversion=6.0 -Dpackaging=jar -Dfile=${main.basedir}/libs/vim25.jar"/>
+                                </exec>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>      
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.5.201505241946</version>
+                <executions>
+                    <execution>
+                        <id>prepare-unit-test-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${session.executionRootDirectory}/_build/testReports/codecoverage/jacoco.exec</destFile>
+                            <append>true</append>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>pre-integration-test</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${session.executionRootDirectory}/_build/testReports/codecoverage/jacoco.exec</destFile>
+                            <append>true</append>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <includes>
+                        <include>**</include>
+                    </includes>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

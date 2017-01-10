@@ -2,58 +2,69 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.microsoft.vmware</groupId>
-    <artifactId>vmware-integration-tools</artifactId>
-    <version>1.0</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>vmOpsTool</artifactId>
-  <packaging>jar</packaging>
-  <description>This project contains all the source code related to manage VM operations on VMWare vCenter Server</description>
+    <properties>
+        <main.basedir>${project.basedir}/../../../</main.basedir>
+    </properties>
+    
+    <parent>
+        <groupId>com.microsoft.vmware</groupId>
+        <artifactId>vmware-integration-tools</artifactId>
+        <version>1.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
-  <dependencies>
-    <dependency>
-      <groupId>com.vmware</groupId>
-      <artifactId>vimjar</artifactId>
-      <version>6.0</version>
-      <scope>system</scope>
-      <systemPath>${env.SYSTEMDRIVE}/externalapis/vim25.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>javax.xml.ws</groupId>
-      <artifactId>jaxws-api</artifactId>
-      <version>2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.xml.ws</groupId>
-      <artifactId>jaxws-rt</artifactId>
-      <version>2.1.4</version>
-    </dependency>
-  </dependencies>
+    <artifactId>vmOpsTool</artifactId>
+    <packaging>jar</packaging>
+    <description>This project contains all the source code related to manage VM operations on VMWare vCenter Server</description>
+    
+    <repositories>
+        <repository>
+            <id>my-repo1</id>
+            <name>your custom repo</name>
+            <url>http://jarsm2.dyndns.dk</url>
+        </repository>
+    </repositories>
+  
+    <dependencies>
+        <dependency>
+            <groupId>com.vmware</groupId>
+            <artifactId>vmware-vim25</artifactId>
+            <version>6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.ws</groupId>
+            <artifactId>jaxws-api</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>2.1.4</version>
+        </dependency>
+    </dependencies>
 
-  <build>
-    <sourceDirectory>./</sourceDirectory>
-    <outputDirectory>../../../_build/src/tools/vmOpsTool</outputDirectory>
-    <plugins>
-      <plugin>
-        <!-- Build an executable JAR -->
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.1</version>
-        <configuration>
-          <outputDirectory>../../../_build/src/tasks/vmOperations</outputDirectory>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>VmOpsTool</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+    <build>
+        <sourceDirectory>./</sourceDirectory>
+        <outputDirectory>../../../_build/src/tools/vmOpsTool</outputDirectory>
+        <plugins>
+            <plugin>
+                <!-- Build an executable JAR -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <outputDirectory>../../../_build/src/tasks/vmOperations</outputDirectory>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>VmOpsTool</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
