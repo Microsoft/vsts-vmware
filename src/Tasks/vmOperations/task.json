@@ -31,7 +31,7 @@
             "helpMarkDown": "VMware vCenter Server connection to target for deployment."
         },
         {
-            "name": "action", 
+            "name": "action",
             "type": "pickList",
             "label": "Action",
             "defaultValue": "Deploy Virtual Machines using Template",
@@ -72,6 +72,15 @@
             "defaultValue": "",
             "required": true,
             "helpMarkDown": "Name of the Datacenter where the virtual machines are present or needs to be created."
+        },
+        {
+            "name": "targetFolder",
+            "type": "string",
+            "label": "Folder",
+            "defaultValue": "",
+            "required": false,
+            "visibleRule": "action = Deploy Virtual Machines using Template",
+            "helpMarkDown": "Name of the Folder where the virtual machines need to be created. Use '/' to delimit subfolders."
         },
         {
             "name": "computeType",
@@ -159,13 +168,13 @@
             "visibleRule": "action = Take Snapshot of Virtual Machines || action = Deploy Virtual Machines using Template",
             "helpMarkDown": "Provide a description for the action."
         },
-        { 
-            "name": "timeout", 
-            "type": "string", 
+        {
+            "name": "timeout",
+            "type": "string",
             "label": "Wait Time",
-            "defaultValue": "600", 
+            "defaultValue": "600",
             "required": false,
-            "helpMarkDown": "Specify wait time in seconds for the Virtual Machine to be in deployment ready state.", 
+            "helpMarkDown": "Specify wait time in seconds for the Virtual Machine to be in deployment ready state.",
             "visibleRule": "action = Power On Virtual Machines || action = Shutdown Virtual Machines || action = Take Snapshot of Virtual Machines || action = Revert Snapshot of Virtual Machines || action = Deploy Virtual Machines using Template"
         },
         {

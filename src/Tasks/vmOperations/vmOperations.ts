@@ -33,6 +33,7 @@ export class VmOperations {
         switch (actionName) {
             case "Deploy Virtual Machines using Template":
                 var template = tl.getInput("template", true);
+                var folder = tl.getInput("targetFolder", false);
                 var computeType = tl.getInput("computeType", true);
                 var datastore = tl.getInput("datastore", true);
                 var description = tl.getInput("description", false);
@@ -53,7 +54,7 @@ export class VmOperations {
                         tl.error("Invalid compute type : " + computeType);
                         tl.exit(1);
                 }
-                cmdArgs += " -clonetemplate \"" + template  + "\" -computetype \"" + computeType + "\" -computename \"" +
+                cmdArgs += " -clonetemplate \"" + template  + "\" -computetype \"" + computeType + "\" -folder \"" + folder + "\" -computename \"" +
                         computeName + "\" -datastore \"" + datastore + "\" -customizationspec \"" + customizationspec + "\" -description \"" + description + "\" -timeout " + timeout;
                 break;
             case "Take Snapshot of Virtual Machines":

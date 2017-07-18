@@ -30,13 +30,14 @@ public abstract class VMWarePlatformTests {
     public void cloneVMFromTemplateWithTargetComputeAsESXiHostShouldSucceed() throws Exception {
         String newVmName = "newVmOnEsxiHost";
         String targetDC = "redmonddc";
+        String targetFolder = "";
         String computeType = "ESXi Host";
         String computeName = "idcvstt-lab318.corp.microsoft.com";
         String datastore = "datastore1";
         String description = "Creating new VM from ubuntuVM template on ESXi host";
         connData.setTargetDC(targetDC);
 
-        vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+        vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, targetFolder, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
 
         assertThat(vmWareImpl.isVMExists(newVmName, connData)).isEqualTo(true);
 
@@ -49,13 +50,14 @@ public abstract class VMWarePlatformTests {
     public void cloneVMFromTemplateWithTargetComputeAsClusterShouldSucceed() throws Exception {
         String newVmName = "newVmOnCluster";
         String targetDC = "fareastdc";
+        String targetFolder = "";
         String computeType = "Cluster";
         String computeName = "fareastcluster";
         String datastore = "SharedStorage";
         String description = "Creating new VM from ubuntuVM template on cluster";
         connData.setTargetDC(targetDC);
 
-        vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+        vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, targetFolder, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
 
         assertThat(vmWareImpl.isVMExists(newVmName, connData)).isEqualTo(true);
 
@@ -68,13 +70,14 @@ public abstract class VMWarePlatformTests {
     public void cloneVMFromTemplateWithTargetComputeAsResourcePoolShouldSucceed() throws Exception {
         String newVmName = "newVmOnResourcePool";
         String targetDC = "fareastdc";
+        String targetFolder = "";
         String computeType = "Resource Pool";
         String computeName = "fareastrp";
         String datastore = "SharedStorage";
         String description = "Creating new VM from ubuntuVM template on resource pool";
         connData.setTargetDC(targetDC);
 
-        vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+        vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, targetFolder, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
 
         assertThat(vmWareImpl.isVMExists(newVmName, connData)).isEqualTo(true);
 
@@ -87,6 +90,7 @@ public abstract class VMWarePlatformTests {
     public void cloneVMFromTemplateWithInvalidTargetComputeShouldFail() throws Exception {
         String newVmName = "newVM";
         String targetDC = "fareastdc";
+        String targetFolder = "";
         String computeType = "Invalid Compute";
         String computeName = "fareastrp";
         String datastore = "datastore2";
@@ -95,7 +99,7 @@ public abstract class VMWarePlatformTests {
 
         Exception exp = null;
         try {
-            vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+            vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, targetFolder, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
         } catch (Exception e) {
             exp = e;
         }
@@ -107,6 +111,7 @@ public abstract class VMWarePlatformTests {
         String newVmName = "newVM";
         String nonExistingTemplate = "InvalidTemplate";
         String targetDC = "fareastdc";
+        String targetFolder = "";
         String computeType = "Resource Pool";
         String computeName = "fareastrp";
         String datastore = "datastore2";
@@ -115,7 +120,7 @@ public abstract class VMWarePlatformTests {
 
         Exception exp = null;
         try {
-            vmWareImpl.cloneVMFromTemplate(nonExistingTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+            vmWareImpl.cloneVMFromTemplate(nonExistingTemplate, newVmName, targetFolder, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
         } catch (Exception e) {
             exp = e;
         }
@@ -126,6 +131,7 @@ public abstract class VMWarePlatformTests {
     public void cloneVMFromTemplateWithNonExistingTargetDatacenterShouldFail() throws Exception {
         String newVmName = "newVM";
         String targetDC = "InvalidDc";
+        String targetFolder = "";
         String computeType = "Resource Pool";
         String computeName = "fareastrp";
         String datastore = "datastore1";
@@ -134,7 +140,7 @@ public abstract class VMWarePlatformTests {
 
         Exception exp = null;
         try {
-            vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+            vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, targetFolder, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
         } catch (Exception e) {
             exp = e;
         }
@@ -145,6 +151,7 @@ public abstract class VMWarePlatformTests {
     public void cloneVMFromTemplateWithNonExistingTargetESXiShouldFail() {
         String newVmName = "newVM";
         String targetDC = "fareastdc";
+        String targetFolder = "";
         String computeType = "ESXi Host";
         String computeName = "InvalidHost";
         String datastore = "datastore1";
@@ -153,7 +160,7 @@ public abstract class VMWarePlatformTests {
 
         Exception exp = null;
         try {
-            vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+            vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, targetFolder, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
         } catch (Exception e) {
             exp = e;
         }
@@ -164,6 +171,7 @@ public abstract class VMWarePlatformTests {
     public void cloneVMFromTemplateWithNonExistingTargetCloudShouldFail() {
         String newVmName = "newVM";
         String targetDC = "fareastdc";
+        String targetFolder = "";
         String computeType = "Cluster";
         String computeName = "InvalidCluster";
         String datastore = "datastore1";
@@ -172,7 +180,7 @@ public abstract class VMWarePlatformTests {
 
         Exception exp = null;
         try {
-            vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+            vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, targetFolder, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
         } catch (Exception e) {
             exp = e;
         }
@@ -183,6 +191,7 @@ public abstract class VMWarePlatformTests {
     public void cloneVMFromTemplateWithNonExistingTargetResourcePoolShouldFail() {
         String newVmName = "newVM";
         String targetDC = "fareastdc";
+        String targetFolder = "";
         String computeType = "Resource Pool";
         String computeName = "InvalidRp";
         String datastore = "datastore1";
@@ -191,7 +200,7 @@ public abstract class VMWarePlatformTests {
 
         Exception exp = null;
         try {
-            vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
+            vmWareImpl.cloneVMFromTemplate(ubuntuTemplate, newVmName, targetFolder, computeType, computeName, datastore, linuxCustomizationSpec, description, 1200, connData);
         } catch (Exception e) {
             exp = e;
         }

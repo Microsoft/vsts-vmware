@@ -189,6 +189,7 @@ public class VmOpsTool {
     private String executeCloneVmAction(Map<String, String> argsMap, String vmName, ConnectionData connData) throws Exception {
         String failedVm = "";
         String templateName = argsMap.get(Constants.CLONE_TEMPLATE);
+        String folder = argsMap.get(Constants.FOLDER);
         String computeType = argsMap.get(Constants.COMPUTE_TYPE);
         String computeName = argsMap.get(Constants.COMPUTE_NAME);
         String datastore = argsMap.get(Constants.DATASTORE);
@@ -197,7 +198,7 @@ public class VmOpsTool {
         int timeout = parseTimeout(argsMap.get(Constants.TIMEOUT));
 
         try {
-            vmwareFactory.call().cloneVMFromTemplate(templateName, vmName, computeType, computeName, datastore,
+            vmwareFactory.call().cloneVMFromTemplate(templateName, vmName, folder, computeType, computeName, datastore, 
                     customizationspec, description, timeout, connData);
         } catch (Exception exp) {
             System.out.println(exp.getMessage() != null ? exp.getMessage() : "Unknown error occurred.");

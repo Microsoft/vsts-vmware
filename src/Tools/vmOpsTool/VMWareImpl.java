@@ -22,6 +22,7 @@ public class VMWareImpl implements IVMWare {
     private final String CLUSTER_COMPUTE_RESOURCE = "ClusterComputeResource";
     private final String RESOURCE_POOL = "ResourcePool";
     private final String DATA_STORE = "Datastore";
+    private final String FOLDER = "Folder";
 
     // vCenter Managed Object properties
     private final String VM_FOLDER = "vmFolder";
@@ -80,13 +81,20 @@ public class VMWareImpl implements IVMWare {
         System.out.println("Successfully established session with vCenter server.");
     }
 
-    public void cloneVMFromTemplate(String templateName, String vmName, String computeType,
+    public void cloneVMFromTemplate(String templateName, String vmName, String folder, String computeType,
                                     String computeName, String targetDS, String customizationSpec,
                                     String description, int timeout, ConnectionData connData) throws Exception {
         connect(connData);
         System.out.println(String.format("Finding template [ %s ] on vCenter server.", templateName));
         ManagedObjectReference templateMor = getMorByName(targetDCMor, templateName, VIRTUAL_MACHINE, true);
-        ManagedObjectReference targetVmFolder = (ManagedObjectReference) getMorProperties(targetDCMor, new String[]{VM_FOLDER}).get(VM_FOLDER);
+        ManagedObjectReference targetVmFolder;
+        if(folder.isEmpty()){
+          targetVmFolder = (ManagedObjectReference) getMorProperties(targetDCMor, new String[]{VM_FOLDER}).get(VM_FOLDER);
+        } else {
+          System.out.println(String.format("Finding target folder [ %s ] on vCenter server.", folder));
+          targetVmFolder = getVirtualMachineFolder(folder);
+        }
+        
         VirtualMachineCloneSpec cloneSpec = getVirtualMachineCloneSpec(computeType, computeName, targetDS, customizationSpec, description);
 
         System.out.println(String.format("Creating new virtual machine [ %s ] using template [ %s ].", vmName, templateName));
@@ -760,6 +768,17 @@ public class VMWareImpl implements IVMWare {
                     Constants.TASK_ID));
             throw new Exception("Failed to create filter spec: " + exp.getMessage());
         }
+    }
+
+    private ManagedObjectReference getVirtualMachineFolder(String folderPath) throws Exception{
+      String[] folderHierarchy = folderPath.split("/");
+      ManagedObjectReference folder = getMorByName(targetDCMor, folderHierarchy[0], FOLDER, false);
+
+      for(int level = 1; level < folderHierarchy.length; level++){
+        folder = getMorByName(folder, folderHierarchy[level], FOLDER, false);
+      }
+
+      return folder;
     }
 
     private VirtualMachineCloneSpec getVirtualMachineCloneSpec(String computeType, String computeName, String targetDS,

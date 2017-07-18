@@ -164,7 +164,7 @@ public class InMemoryVMWareImpl implements IVMWare {
         }
     }
 
-    public synchronized void cloneVMFromTemplate(String templateName, String vmName, String computeType, String computeName,
+    public synchronized void cloneVMFromTemplate(String templateName, String vmName, String folder, String computeType, String computeName,
                                                  String datastore, String customizationSpec, String description, int timeout, ConnectionData connData) throws Exception {
         if (vmName.equals("VMNameThatFailsInClone")) {
             throw new Exception("Clone VM from template operation failed for VMNameThatFailsInClone");
